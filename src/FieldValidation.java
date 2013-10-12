@@ -9,17 +9,17 @@
 
 public class FieldValidation implements QualityFactor
 {
-	@Override
-	public float run(Tuple entry)
-	{
-		if(entry.valid())
-		{
-			return 1.0f;
-		}
-		else
-		{
-			return 0.0f;
-		}
-	}
+    @Override
+    public float run(Tuple entry)
+    {
+        if(entry.valid())
+        {
+            return 1.0f;
+        }
+        else
+        {
+            return 0.0f;
+        }
+    }
 
 }

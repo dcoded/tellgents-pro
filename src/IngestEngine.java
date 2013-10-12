@@ -34,59 +34,59 @@ import java.util.regex.MatchResult;
  */
 public class IngestEngine implements AutoCloseable
 {
-	private String line_ = null;
-	
-	private BufferedReader reader_ = null;
-	
-	public IngestEngine(File dataset) throws FileNotFoundException
-	{
-		reader_ = new BufferedReader(new FileReader(dataset.getAbsolutePath()));
-	}
-	
-	public Tuple next() throws IOException
-	{
-		Tuple tuple = null;
+    private String line_ = null;
+    
+    private BufferedReader reader_ = null;
+    
+    public IngestEngine(File dataset) throws FileNotFoundException
+    {
+        reader_ = new BufferedReader(new FileReader(dataset.getAbsolutePath()));
+    }
+    
+    public Tuple next() throws IOException
+    {
+        Tuple tuple = null;
 
-		if( (line_ = reader_.readLine()) != null)
-		{
-			tuple = parse_and_create();
-		}
-		
-		return tuple;
-	}
-	
-	public void close() throws IOException
-	{
-		reader_.close();
-	}
-	
-	private Tuple parse_and_create()
-	{
-		Tuple   tuple = new Tuple();
-		Scanner scan  = new Scanner(line_);
+        if( (line_ = reader_.readLine()) != null)
+        {
+            tuple = parse_and_create();
+        }
+        
+        return tuple;
+    }
+    
+    public void close() throws IOException
+    {
+        reader_.close();
+    }
+    
+    private Tuple parse_and_create()
+    {
+        Tuple   tuple = new Tuple();
+        Scanner scan  = new Scanner(line_);
 
-		try
-		{
-			tuple = new Tuple
-					(
-						scan.nextInt(), // buoy
-						scan.nextInt(), // day
-						scan.nextDouble(), // latitude
-						scan.nextDouble(), // longitude
-						scan.nextDouble(), // zon_winds
-						scan.nextDouble(), // mer_winds
-						scan.nextDouble(), // humidity
-						scan.nextDouble(), // air_temp
-						scan.nextDouble() // sea temp
-					);
-		}
-		catch(NoSuchElementException e)
-		{
-			tuple = new Tuple();
-		}
-	
-		scan.close();
-		
-		return tuple;
-	}
+        try
+        {
+            tuple = new Tuple
+                    (
+                        scan.nextInt(), // buoy
+                        scan.nextInt(), // day
+                        scan.nextDouble(), // latitude
+                        scan.nextDouble(), // longitude
+                        scan.nextDouble(), // zon_winds
+                        scan.nextDouble(), // mer_winds
+                        scan.nextDouble(), // humidity
+                        scan.nextDouble(), // air_temp
+                        scan.nextDouble() // sea temp
+                    );
+        }
+        catch(NoSuchElementException e)
+        {
+            tuple = new Tuple();
+        }
+    
+        scan.close();
+        
+        return tuple;
+    }
 }
