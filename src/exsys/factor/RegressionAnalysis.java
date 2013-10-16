@@ -19,6 +19,8 @@ import exsys.data.Tuple;
 public class RegressionAnalysis implements QualityFactor
 {
 	private static double PPMCC_STRONG_BOUNDRY  = 0.9;
+	private static double ERROR_DILUTION_FACTOR = 0.625;
+	private static double FLYWHEEL_ENABLE_WAIT  = 128;
 	
 	private SimpleRegression[] regressions_;
 	
@@ -26,6 +28,8 @@ public class RegressionAnalysis implements QualityFactor
 	private int     length_;
 	
 	private int combinations_ = -1;
+	
+	private int count_ = 0;
 	
 	public RegressionAnalysis()
 	{
@@ -61,11 +65,17 @@ public class RegressionAnalysis implements QualityFactor
 					}
 				}
 			}
+			count_++;
 		}
 		catch (IllegalArgumentException | IllegalAccessException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		if(count_ < FLYWHEEL_ENABLE_WAIT)
+		{
+			confidence = 1.0;
 		}
 		return (float) confidence;
 	}
@@ -73,8 +83,8 @@ public class RegressionAnalysis implements QualityFactor
 	private double regress_field_combination(int a, int b, double[] values, SimpleRegression reg)
 	{
 		double conf = Double.NaN;
-		
-		if(reg.getR() > PPMCC_STRONG_BOUNDRY)
+		double r = reg.getR();
+		if(Math.abs(r) > PPMCC_STRONG_BOUNDRY && !Double.isNaN(r))
 		{
 			conf = detect_prediction_errors(values[a], values[b], reg);
 		}
@@ -87,7 +97,7 @@ public class RegressionAnalysis implements QualityFactor
 	private double detect_prediction_errors(double a, double b, SimpleRegression reg)
 	{	
 		double b_hat = reg.predict(a);
-		double error = (Math.abs(b_hat - b) / Math.abs(b));
+		double error = (Math.abs(b_hat - b) / Math.abs(b)) * ERROR_DILUTION_FACTOR;
 		
 		if(error > 1.0)
 		{
