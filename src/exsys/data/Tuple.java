@@ -1,3 +1,6 @@
+package exsys.data;
+
+
 
 
 /* FIELDS
@@ -85,4 +88,5 @@ public class Tuple
     {
         return !error_;
     }
+    
 }

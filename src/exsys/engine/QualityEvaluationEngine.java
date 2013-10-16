@@ -1,5 +1,10 @@
+package exsys.engine;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import exsys.data.Tuple;
+import exsys.factor.QualityFactor;
 
 
 public class QualityEvaluationEngine

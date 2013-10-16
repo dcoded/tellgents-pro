@@ -1,3 +1,6 @@
+package exsys.factor;
+import exsys.data.Tuple;
+
 /* 2.2.1 Field Validation
  * 
  * We will first attempt to invalidate the entire entry by checking for

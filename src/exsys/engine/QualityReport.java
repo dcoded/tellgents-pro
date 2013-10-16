@@ -1,12 +1,14 @@
+package exsys.engine;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import exsys.data.Tuple;
+import exsys.factor.QualityFactor;
 
 
 public class QualityReport
 {
     private Tuple tuple_;
-    
-    private float quality_;
     
     private Map<Class<? extends QualityFactor> , Float> factors_;
     

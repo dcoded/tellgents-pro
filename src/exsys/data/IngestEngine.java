@@ -1,12 +1,11 @@
+package exsys.data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.MatchResult;
 
 
 /* Responsible to read data from file
