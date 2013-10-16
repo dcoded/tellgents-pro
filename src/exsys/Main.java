@@ -2,6 +2,8 @@ package exsys;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -16,49 +18,53 @@ import exsys.factor.RegressionAnalysis;
 
 public class Main
 {
+	private static File dataset = new File("dataset/elnino");
+	
+	private static QualityEvaluationEngine quality = new QualityEvaluationEngine
+			(
+				new FieldValidation(),
+				new RegressionAnalysis()
+			);
+	
+	
+	private static int processed_entries = 0;
+	
+	private static List<QualityReport> lowq_reports = new LinkedList<QualityReport>();
+	
     public static void main(String[] args)
     {
-        File dataset = new File("C:\\Users\\denis_000\\workspace\\IntSysProj\\dataset\\elnino");
-        
-        try(IngestEngine reader = new IngestEngine(dataset))
-        {
-            System.out.println("loading analysis engine");
-            QualityEvaluationEngine quality = new QualityEvaluationEngine(
-                                                  new FieldValidation(),
-                                                  new RegressionAnalysis()
-                                              );
-             
-             
-            System.out.println("running analysis");
-            
-            Tuple entry = null;
-            int good = 0;
-            int bad  = 0;
-            int n    = 0;
-            
+    	try(IngestEngine reader = new IngestEngine(dataset))
+        {  
+            Tuple entry = null;         
             while ((entry = reader.next ()) != null)
             try
-            {
-                n++;
-             //   System.out.println("\t[" + n + "] " + entry.toString());
+            {               
                 quality.ingest(entry);
-                good++;
+                processed_entries++;
             }
             catch (LowQualityException e)
             {
-                QualityReport report = e.report();
-                report.print();
-                
-                bad++;
+                lowq_reports.add(e.report());
             }
             
-            System.out.println( n        + " entries processed: " +
-                                good     + " valid, " +
-                                bad      + " invalid");
+            print_final_evaluation();
         }
         catch (IOException e1)
         {
             e1.printStackTrace();
         }
+    }
+    
+    private static void print_final_evaluation()
+    {
+    	System.out.println("File    : " + dataset.getAbsolutePath());
+    	System.out.println("Entries : " + processed_entries);
+    	System.out.println("Low Q   : " + lowq_reports.size());
+    	
+    	System.out.println("Rejected Entries:");
+    	for(QualityReport r : lowq_reports)
+    	{
+    		System.out.println(r.tuple());
+    	}
     }
 }

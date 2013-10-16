@@ -15,11 +15,6 @@ public class QualityEvaluationEngine
     public QualityEvaluationEngine(QualityFactor...components)
     {
         components_ = components;
-        for(QualityFactor com : components)
-        {
-            System.out.println("\tcomponent '" + com + "' loaded");
-        }
-        
         factors_ = new HashMap<Class<? extends QualityFactor> , Float>();
     }
 

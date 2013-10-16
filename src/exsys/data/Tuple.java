@@ -2,7 +2,6 @@ package exsys.data;
 
 
 
-
 /* FIELDS
  * 
  * 0: buoy
@@ -21,6 +20,7 @@ package exsys.data;
 
 public class Tuple
 {
+	private String unparsed = null;
     private boolean error_ = true;
     
     public int buoy;
@@ -62,10 +62,11 @@ public class Tuple
     public double air_temp;
     public double sea_temp;
     
-    public Tuple(int buoy, int day, double latitude, double longitude,
+    public Tuple(String unparsed, int buoy, int day, double latitude, double longitude,
                  double zon_winds, double mer_winds, double humidity,
                  double air_temp, double sea_temp)
     {
+    	this.unparsed  = unparsed;
         this.buoy      = buoy;
         this.day       = day;
         this.latitude  = latitude;
@@ -79,8 +80,9 @@ public class Tuple
         this.error_ = false;
     }
     
-    public Tuple()
+    public Tuple(String unparsed)
     {
+    	this.unparsed = unparsed;
         error_ = true;
     }
     
@@ -89,4 +91,9 @@ public class Tuple
         return !error_;
     }
     
+    @Override
+    public String toString()
+    {
+    	return unparsed;
+    }
 }

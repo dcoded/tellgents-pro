@@ -61,13 +61,14 @@ public class IngestEngine implements AutoCloseable
     
     private Tuple parse_and_create()
     {
-        Tuple   tuple = new Tuple();
+        Tuple   tuple = null;
         Scanner scan  = new Scanner(line_);
 
         try
         {
             tuple = new Tuple
                     (
+                    	line_,
                         scan.nextInt(), // buoy
                         scan.nextInt(), // day
                         scan.nextDouble(), // latitude
@@ -81,7 +82,7 @@ public class IngestEngine implements AutoCloseable
         }
         catch(NoSuchElementException e)
         {
-            tuple = new Tuple();
+            tuple = new Tuple(line_);
         }
     
         scan.close();
