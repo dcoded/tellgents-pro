@@ -1,0 +1,17 @@
+We collected our El Nino data set from the UC Irvine Machine Learning Database, who received the data from the Pacific Marine Environmental Laboratory. 
+
+The directory containing the data exists at: http://archive.ics.uci.edu/ml/machine-learning-databases/el_nino-mld/
+
+Each line contains a single data entry, with the following columns:
+
+1. buoy - a unique identifier for a specific physical buoy. Range 1-59
+2. day - the day the data was collected, as an integer. Range 1-14
+3. lattitude - geographical lattitude (north-south position)
+4. longitude - geographical longitude (east-west position) 
+5. zon.winds - wind speed along the lattitude circle
+6. mer.winds - wind speed along the longitudinal circle
+7. humidity - relative humidity value for the specific buoy
+8. air temp - temperature of the air above the water at the buoy point
+9. s.s.temp - temperature of the water at the sea surface (underwater)
+
+There are some missing data attributes for a subset of the data, which is represented by a single period. 
