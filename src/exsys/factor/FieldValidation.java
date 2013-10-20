@@ -19,6 +19,13 @@ import exsys.data.Tuple;
  */
 public class FieldValidation implements QualityFactor
 {
+    /**
+	 * Constructor builds the analysis chain given user passed
+	 * QualityFactor (see QualityFactor.java) tests.
+	 * 
+	 * @param  components   The tests to be used in determining quality metrics.
+	 * @see                 QualityFactor
+	 */
     @Override
     public float run(Tuple entry)
     {

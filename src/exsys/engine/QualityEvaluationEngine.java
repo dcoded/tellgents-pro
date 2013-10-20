@@ -37,9 +37,7 @@ public class QualityEvaluationEngine
 	 * generator pattern.
 	 * 
 	 * @param   entry         is a Tuple (see Tuple.java) object
-	 * 
 	 * @param   min_quality   is the threshold of acceptable quality
-	 *                        which triggers an exception below this
 	 */
     public void ingest(Tuple entry, double min_quality)
     throws LowQualityException

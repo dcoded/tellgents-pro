@@ -41,6 +41,10 @@ public class RegressionAnalysis implements QualityFactor
 	private int     combinations_ = -1;
 	private int     count_ = 0;
 	
+    /**
+	 * Constructor inspects the tuple fields via reflection and
+	 * creates the required number of regression models.
+	 */
 	public RegressionAnalysis()
 	{
 		fields_ = Tuple.class.getFields();
@@ -55,6 +59,14 @@ public class RegressionAnalysis implements QualityFactor
 			regressions_[i] = new SimpleRegression();
 	}
 	
+    /**
+	 * Performs correlation and regression analysis on all
+	 * combinations of 2 fields in the tuple.
+	 * 
+	 * @param   tuple   the dataset entry to analyze
+	 * @return          the level of confidence that the entry is of quality
+	 * @see             QualityFactor
+	 */
 	@Override
 	public float run(Tuple tuple)
 	{	
@@ -85,6 +97,20 @@ public class RegressionAnalysis implements QualityFactor
 		return (float) confidence;
 	}
    
+    /**
+	 * Checks for pairs of fields which show high correlation by
+	 * calculating Pearson's product moment correlation coefficient
+	 * of the two fields.  If a field is high enough (determined by
+	 * PPMCC_STRONG_BOUNDRY) then the returned confidence is
+	 * calculated as (1 - predicted error), otherwise 1.0 is returned
+	 * to signify no obvious relationship to test for or against.
+	 * 
+	 * @param   a        one of the fields
+	 * @param   b        one of the fields (which is not a)
+	 * @param   values   a linear array of field values
+	 * @param   reg      the specific regression model for the two fields
+	 * @return           the level of confidence that the entry is of quality
+	 */
 	private double regression(int a, int b, double[] values,
 							  SimpleRegression reg)
 	{
@@ -101,6 +127,15 @@ public class RegressionAnalysis implements QualityFactor
 		return conf;
 	}
 
+    /**
+	 * Performs the regression analysis and returns a weighted
+	 * confidence of quality as (1 - % predicted error).
+	 * 
+	 * @param   a        one of the fields
+	 * @param   b        one of the fields (which is not a)
+	 * @param   reg      the specific regression model for the two fields
+	 * @return           the level of confidence that the entry is of quality
+	 */
 	private double predict(double a, double b, SimpleRegression reg)
 	{	
 		double b_hat = reg.predict(a);
@@ -112,6 +147,12 @@ public class RegressionAnalysis implements QualityFactor
 		return 1 - error;
 	}
 
+    /**
+	 * Converts a POJO tuple into a linear array of field values.
+	 * 
+	 * @param   tuple   the tuple entry to extract values from
+	 * @return          the array of values
+	 */
 	private double[] parseValues(Tuple tuple)
 	throws IllegalArgumentException, IllegalAccessException
 	{
