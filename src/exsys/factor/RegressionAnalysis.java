@@ -31,7 +31,7 @@ import exsys.data.Tuple;
 public class RegressionAnalysis implements QualityFactor
 {
 	private static double PPMCC_STRONG_BOUNDRY  = 0.9;
-	private static double ERROR_DILUTION_FACTOR = 1; // 0.625
+	private static double ERROR_DILUTION_FACTOR = 0.25; // 0.625
 	private static double FLYWHEEL_ENABLE_WAIT  = 128;
 	
 	private SimpleRegression[] regressions_;
@@ -114,7 +114,7 @@ public class RegressionAnalysis implements QualityFactor
 	private double regression(int a, int b, double[] values,
 							  SimpleRegression reg)
 	{
-		double conf = 0.995;
+		double conf = 1;
 		double r    = reg.getR();
 		
 		if(Math.abs(r) > PPMCC_STRONG_BOUNDRY && !Double.isNaN(r))

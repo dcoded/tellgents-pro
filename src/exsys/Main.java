@@ -30,17 +30,15 @@ import exsys.factor.WindVelocityCheck;
  * @version 0.0.1, Oct 2013 
  */
 public class Main
-{
-	private static File dataset = new File("dataset/elnino.hq.txt");
-	
+{	
 	private static QualityEvaluationEngine quality = new QualityEvaluationEngine
 			(
 				new FieldValidation(),
 				new LatitudeLongitudeCheck(),
 				new TemperatureCheck(),
 				new HumidityCheck(),
-				new WindVelocityCheck()
-				//new RegressionAnalysis()
+				new WindVelocityCheck(),
+				new RegressionAnalysis()
 			);
 	
 	
@@ -48,11 +46,23 @@ public class Main
 	
 	private static List<QualityReport> lowq_reports = new LinkedList<QualityReport>();
 
-	
+	private static File dataset = null;
 	
 	
     public static void main(String[] args)
     {
+    	if(args.length < 1)
+    	{
+    		System.out.println("Usage: java IntSysProj <dataset>");
+    		return;
+    	}
+    	
+    	dataset = new File(args[0]);
+    	if(dataset.exists() == false)
+    	{
+    		System.out.println("Dataset file not found at: " + dataset.getAbsolutePath());
+    		return;
+    	}
     	
     	PrintWriter good_quality = null;
     	PrintWriter bad_quality = null;
@@ -73,7 +83,7 @@ public class Main
             	
             	quality_log.println("[" + report.quality() + "] " + entry);
             	
-            	if(report.quality() >= 0.5)
+            	if(report.quality() >= 0.65)
             	{
                     good_quality.println(entry);
             	}
