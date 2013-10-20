@@ -16,9 +16,11 @@ import exsys.engine.LowQualityException;
 import exsys.engine.QualityEvaluationEngine;
 import exsys.engine.QualityReport;
 import exsys.factor.FieldValidation;
+import exsys.factor.HumidityCheck;
 import exsys.factor.LatitudeLongitudeCheck;
 import exsys.factor.RegressionAnalysis;
 import exsys.factor.TemperatureCheck;
+import exsys.factor.WindVelocityCheck;
 
 
 
@@ -29,8 +31,6 @@ import exsys.factor.TemperatureCheck;
  */
 public class Main
 {
-	private static double MINIMUM_QUALITY_THRESHOLD = 0.5;
-	
 	private static File dataset = new File("dataset/elnino.hq.txt");
 	
 	private static QualityEvaluationEngine quality = new QualityEvaluationEngine
@@ -38,7 +38,9 @@ public class Main
 				new FieldValidation(),
 				new LatitudeLongitudeCheck(),
 				new TemperatureCheck(),
-				new RegressionAnalysis()
+				new HumidityCheck(),
+				new WindVelocityCheck()
+				//new RegressionAnalysis()
 			);
 	
 	
