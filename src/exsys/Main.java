@@ -1,6 +1,9 @@
 package exsys;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +16,9 @@ import exsys.engine.LowQualityException;
 import exsys.engine.QualityEvaluationEngine;
 import exsys.engine.QualityReport;
 import exsys.factor.FieldValidation;
+import exsys.factor.LatitudeLongitudeCheck;
 import exsys.factor.RegressionAnalysis;
+import exsys.factor.TemperatureCheck;
 
 
 
@@ -26,11 +31,13 @@ public class Main
 {
 	private static double MINIMUM_QUALITY_THRESHOLD = 0.5;
 	
-	private static File dataset = new File("dataset/elnino");
+	private static File dataset = new File("dataset/elnino.hq.txt");
 	
 	private static QualityEvaluationEngine quality = new QualityEvaluationEngine
 			(
 				new FieldValidation(),
+				new LatitudeLongitudeCheck(),
+				new TemperatureCheck(),
 				new RegressionAnalysis()
 			);
 	
@@ -39,24 +46,41 @@ public class Main
 	
 	private static List<QualityReport> lowq_reports = new LinkedList<QualityReport>();
 
+	
+	
+	
     public static void main(String[] args)
     {
     	
+    	PrintWriter good_quality = null;
+    	PrintWriter bad_quality = null;
+    	PrintWriter quality_log = null;
+        
     	// read each line of dataset
     	try(IngestEngine reader = new IngestEngine(dataset))
         {  
-            Tuple entry = null;      
-            
+            Tuple entry = null;   
+            good_quality = new PrintWriter(dataset.getAbsoluteFile() + ".hq.txt", "UTF-8");
+            bad_quality  = new PrintWriter(dataset.getAbsoluteFile() + ".lq.txt", "UTF-8");
+            quality_log  = new PrintWriter(dataset.getAbsoluteFile() + ".log.txt", "UTF-8");
+                   
             // If not eof, then read next line as a filled Tuple object
             while ((entry = reader.next ()) != null)
-            try
-            {     
-                quality.ingest(entry, MINIMUM_QUALITY_THRESHOLD);
-                processed_entries++;
-            }
-            catch (LowQualityException e)
             {
-                lowq_reports.add(e.report());
+            	QualityReport report = quality.ingest(entry);
+            	
+            	quality_log.println("[" + report.quality() + "] " + entry);
+            	
+            	if(report.quality() >= 0.5)
+            	{
+                    good_quality.println(entry);
+            	}
+            	else
+            	{
+            		 lowq_reports.add(report);
+                     bad_quality.println(entry);
+            	}
+            	processed_entries++;
             }
             
             // output stats
@@ -66,6 +90,13 @@ public class Main
         {
             e1.printStackTrace();
         }
+    	finally
+    	{
+    		good_quality.close();
+    		bad_quality.close();
+    		quality_log.close();
+    	}
+    	
     }
     
     private static void print_final_evaluation()
