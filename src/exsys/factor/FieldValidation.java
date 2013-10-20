@@ -10,19 +10,19 @@ import exsys.data.Tuple;
  * not dramatically increase or decrease for instance.
  */
 
+/**
+ * A simple test which requires all fields in Tuple to be set
+ * or else automatically rejects entry in analysis chain.
+ * 
+ * @author Denis Coady
+ * @version 0.0.1, Oct 2013
+ */
 public class FieldValidation implements QualityFactor
 {
     @Override
     public float run(Tuple entry)
     {
-        if(entry.valid())
-        {
-            return 1.0f;
-        }
-        else
-        {
-            return 0.0f;
-        }
+    	return (entry.valid()) ? 1.0f : 0.0f;
     }
 
 }

@@ -16,6 +16,18 @@ import exsys.data.Tuple;
  * strong enough to determine correctness of new data points.
  */
 
+/**
+ * RegressionAnalysis runs correlation checks on all fields
+ * combinations in sets of two.  If a set of fields register a
+ * Pearson correlation greater than PPMCC_STRONG_BOUNDRY then a
+ * simple linear regression analysis is performed.  The regression
+ * error (e) is used for the confidence returned as (1 - error).  The
+ * final confidence is calculated using a multiplication chain of
+ * each regression test performed.
+ * 
+ * @author Denis Coady
+ * @version 0.0.1, Oct 2013
+ */
 public class RegressionAnalysis implements QualityFactor
 {
 	private static double PPMCC_STRONG_BOUNDRY  = 0.9;
@@ -26,17 +38,16 @@ public class RegressionAnalysis implements QualityFactor
 	
 	private Field[] fields_;
 	private int     length_;
-	
-	private int combinations_ = -1;
-	
-	private int count_ = 0;
+	private int     combinations_ = -1;
+	private int     count_ = 0;
 	
 	public RegressionAnalysis()
 	{
 		fields_ = Tuple.class.getFields();
 		length_ = fields_.length;
 		
-		combinations_ = (int) ArithmeticUtils.binomialCoefficient(length_, 2);
+		combinations_ = (int) ArithmeticUtils
+							.binomialCoefficient(length_, 2);
 		
 		regressions_  = new SimpleRegression[combinations_];
 		
@@ -50,19 +61,14 @@ public class RegressionAnalysis implements QualityFactor
 		double confidence = 1.0;
 		try
 		{
-			double[] values = parseValues(tuple);
+			double[] values = parseValues(tuple);	
 			int i = 0;
-			int c = 0;
 			
 			for(int a = 0; a < length_; a++)
 			{
 				for(int b = a+1; b < length_; b++)
 				{
-					double conf = regress_field_combination(a,b, values, regressions_[i++]);
-					if(!Double.isNaN(conf))
-					{
-						confidence *= conf;
-					}
+					confidence *= regression(a,b, values, regressions_[i++]);
 				}
 			}
 			count_++;
@@ -74,19 +80,20 @@ public class RegressionAnalysis implements QualityFactor
 		}
 		
 		if(count_ < FLYWHEEL_ENABLE_WAIT)
-		{
-			confidence = 1.0;
-		}
+		   confidence = 1.0;
+	
 		return (float) confidence;
 	}
    
-	private double regress_field_combination(int a, int b, double[] values, SimpleRegression reg)
+	private double regression(int a, int b, double[] values,
+							  SimpleRegression reg)
 	{
-		double conf = Double.NaN;
-		double r = reg.getR();
+		double conf = 1.0;
+		double r    = reg.getR();
+		
 		if(Math.abs(r) > PPMCC_STRONG_BOUNDRY && !Double.isNaN(r))
 		{
-			conf = detect_prediction_errors(values[a], values[b], reg);
+			conf = predict(values[a], values[b], reg);
 		}
 		
 		reg.addData( values[a], values[b] );
@@ -94,20 +101,19 @@ public class RegressionAnalysis implements QualityFactor
 		return conf;
 	}
 
-	private double detect_prediction_errors(double a, double b, SimpleRegression reg)
+	private double predict(double a, double b, SimpleRegression reg)
 	{	
 		double b_hat = reg.predict(a);
-		double error = (Math.abs(b_hat - b) / Math.abs(b)) * ERROR_DILUTION_FACTOR;
+		double error = (Math.abs(b_hat - b) / Math.abs(b));
 		
-		if(error > 1.0)
-		{
-			error = 1.0;
-		}
+		error *= ERROR_DILUTION_FACTOR;
+		error = (error > 1.0) ? 1.0 : error;
 		
 		return 1 - error;
 	}
 
-	private double[] parseValues(Tuple tuple) throws IllegalArgumentException, IllegalAccessException
+	private double[] parseValues(Tuple tuple)
+	throws IllegalArgumentException, IllegalAccessException
 	{
 		double[] values = new double[length_];
 		for(int i = 0; i < length_; i++)

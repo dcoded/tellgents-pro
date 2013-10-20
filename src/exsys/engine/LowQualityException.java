@@ -2,7 +2,13 @@ package exsys.engine;
 
 
 
-
+/**
+ * LowQualityException is generated when a tuple quality score falls
+ * below the minimum threshold.
+ * 
+ * @author Denis Coady
+ * @version 0.0.1, Oct 2013
+ */
 public class LowQualityException extends Exception
 {
     /**

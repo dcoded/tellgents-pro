@@ -16,8 +16,16 @@ import exsys.factor.FieldValidation;
 import exsys.factor.RegressionAnalysis;
 
 
+
+/**
+ * 
+ * @author Denis Coady
+ * @version 0.0.1, Oct 2013 
+ */
 public class Main
 {
+	private static double MINIMUM_QUALITY_THRESHOLD = 0.5;
+	
 	private static File dataset = new File("dataset/elnino");
 	
 	private static QualityEvaluationEngine quality = new QualityEvaluationEngine
@@ -30,16 +38,20 @@ public class Main
 	private static int processed_entries = 0;
 	
 	private static List<QualityReport> lowq_reports = new LinkedList<QualityReport>();
-	
+
     public static void main(String[] args)
     {
+    	
+    	// read each line of dataset
     	try(IngestEngine reader = new IngestEngine(dataset))
         {  
-            Tuple entry = null;         
+            Tuple entry = null;      
+            
+            // If not eof, then read next line as a filled Tuple object
             while ((entry = reader.next ()) != null)
             try
-            {               
-                quality.ingest(entry);
+            {     
+                quality.ingest(entry, MINIMUM_QUALITY_THRESHOLD);
                 processed_entries++;
             }
             catch (LowQualityException e)
@@ -47,6 +59,7 @@ public class Main
                 lowq_reports.add(e.report());
             }
             
+            // output stats
             print_final_evaluation();
         }
         catch (IOException e1)
